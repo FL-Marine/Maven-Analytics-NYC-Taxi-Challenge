@@ -270,7 +270,7 @@ taxi_data_join_2 <-taxi_data_join %>%
 
 Removing more columns 
 ```{r}
-select(taxi_data_join_2, -lpep_pickup_datetime, -lpep_dropoff_datetime, -hour, -minute, -second, -date)
+select(taxi_data_join_2, -minute, -second)
 ```
 
 Relocating the join result
@@ -279,25 +279,19 @@ taxi_data_join_3 <- taxi_data_join_2 %>%
   relocate(PU_borough, PU_zone, PU_service_zone, .before = DOLocationID) %>% 
   relocate(DO_borough, DO_zone, DO_service_zone, .before = passenger_count) %>% 
   relocate(store_and_fwd_flag, .before = passenger_count) %>% 
-  relocate(service_date, .before = PULocationID) %>% 
-  relocate(PU_time, .before = PULocationID) %>% 
-  relocate(DO_time, .before = DOLocationID)
+  relocate(date, .before = PULocationID)
 ```
 
 This didn't work for some reason to remove columns
 ```{r}
 taxi_data_join_4 <- taxi_data_join_3  
-select(taxi_data_join_4, -lpep_pickup_datetime, -lpep_dropoff_datetime, -hour, -minute, -second, -date)
+select(taxi_data_join_4, -minute, -second)
 ```
 
 Removed columns using the below method again.
 ```{r}
-taxi_data_join_4$lpep_pickup_datetime <- NULL
-taxi_data_join_4$lpep_dropoff_datetime <- NULL
-taxi_data_join_4$hour <- NULL
 taxi_data_join_4$minute <- NULL
 taxi_data_join_4$second <- NULL
-taxi_data_join_4$date <- NULL
 ```
 
 ```{r}
@@ -311,6 +305,6 @@ remove(taxi_data_clean, taxi_data_join, taxi_data_join_2, taxi_data_join_3)
 
 Saving the final clean copy of data to use in separate r markdown. Pedro recommends always have 2 markdowns one for cleaning and one for visualizing. 
 ```{r}
-fwrite(taxi_data_join_4, "C:/Users/abedi/OneDrive/Documents/R Projects/Maven Analytics NYC Taxi Challenge/clean_data_2.csv")
+fwrite(taxi_data_join_4, "C:/Users/abedi/OneDrive/Documents/R Projects/Maven Analytics NYC Taxi Challenge/clean_data_3.csv")
 ```
 
