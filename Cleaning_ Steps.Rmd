@@ -252,19 +252,20 @@ taxi_data_join_2 <-taxi_data_join %>%
     hour = hour(taxi_data_join$lpep_pickup_datetime),
     minute = minute(taxi_data_join$lpep_pickup_datetime),
     second = second(taxi_data_join$lpep_pickup_datetime)
-    )  %>% 
-  mutate(
-    service_date = format(date,"%m/%d/%Y"),
-    PU_time = paste(hour, minute, second, sep = ":")
-  ) %>% 
-  mutate( 
-      hour = hour(taxi_data_join$lpep_dropoff_datetime),
-      minute = minute(taxi_data_join$lpep_dropoff_datetime),
-      second = second(taxi_data_join$lpep_dropoff_datetime)
-  ) %>% 
-  mutate(
-    DO_time = paste(hour, minute, second, sep = ":")
+    #)  %>% 
+ # mutate(
+    #service_date = format(date,"%m/%d/%Y"),
+    #PU_time = paste(hour, minute, second, sep = ":")
+  #) %>% 
+ # mutate( 
+      #hour = hour(taxi_data_join$lpep_dropoff_datetime),
+      #minute = minute(taxi_data_join$lpep_dropoff_datetime),
+      #second = second(taxi_data_join$lpep_dropoff_datetime)
+  #) %>% 
+  #mutate(
+    #DO_time = paste(hour, minute, second, sep = ":")
   )
+# During the visualization part of this project I noticed the date and times previously extracted transformed into characters which cannot be visualized.
 ```
 
 Removing more columns 
