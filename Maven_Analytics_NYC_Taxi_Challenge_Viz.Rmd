@@ -1,0 +1,183 @@
+---
+title: "NYC Taxi Challenge Viz"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+    css: styles.css
+    
+---
+<style>                     
+.navbar {
+  background-color:yellow;
+  border-color: black;
+  font-weight: bold;
+   font-size: 30px;
+ 
+}
+.navbar-brand {
+color:black!important;
+}
+</style>
+
+<style type="text/css">
+
+.chart-title {  /* chart_title  */
+   font-size: 20px;
+   background-color: yellow;
+   font-weight: bold;
+   color: black;
+
+</style>
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(ggplot2)
+library(ggrepel)
+library(dplyr)
+library(formattable)
+library(sf)
+library(plotly)
+library(treemapify)
+library(dplyr)
+library(data.table)
+library(scales)
+library(tidyr)
+library(RColorBrewer)
+library(formatR)
+```
+
+```{r}
+# memory.limit(size = 100000)
+```
+
+```{r}
+#Bringing in dataframe.
+taxi_data_join_4 <- fread("C:/Users/abedi/OneDrive/Documents/R Projects/Maven Analytics NYC Taxi Challenge/clean_data_3.csv")
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Avg Fare
+```{r}
+valueBox(scales::dollar(12.32), icon ="fas fa-taxi", color = "yellow")
+```
+
+### Avg Distance
+```{r}
+Withtext <- dollar_format(prefix = " ",suffix=" Miles")
+valueBox(Withtext(2.87), icon = "fas fa-taxi", color = "yellow")
+
+#valueBox(round(mean(taxi_data_join_4$trip_distance), digits = 2), icon ="fas fa-taxi", color = "yellow") This is the code Pedro showed me on how to properly nest Valuebox with round & mean. Decided not to use it because it was easier to use withtext to get to add text to the value box.
+```
+
+
+### Avg Duration
+```{r}
+Withtext <- dollar_format(prefix = " ",suffix=" Minutes")
+valueBox(Withtext(35), icon = "fas fa-taxi", color = "yellow")
+#Change to show avg distance instead of trips this week
+```
+
+Column {.tabset} fig.width=50
+-----------------------------------------------------------------------
+
+### Busiest Days 
+```{r, fig.width=42, fig.height=16} 
+taxi_data_join_4  %>%
+  ggplot(aes(x = weekday)) + geom_bar(fill = '#000000') + ylab("Number of Rides") + xlab("Weekday") + scale_x_discrete(
+    limits = c(
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    )
+  ) + ylab("Number of Rides") + xlab("Weekday") + scale_y_continuous(labels = comma) + theme(axis.text = element_text(size = 50),
+                                                                                             axis.title = element_text(size = 50)) + theme(
+                                                                                               panel.grid.major = element_blank(),
+                                                                                               panel.grid.minor = element_blank(),
+                                                                                               panel.background = element_blank(),
+                                                                                               axis.line = element_line(colour = "black")
+                                                                                             ) +  theme(plot.background = element_rect(fill = 'yellow', colour = 'black'))
+
+#Ethan line chart
+# df2 %>%
+#   ggplot(aes(x = subject, y = y, color = factor(protocol), shape = factor(protocol), line = factor(protocol)  )) +
+#   geom_line() +
+#   geom_point() +
+#   xlab("Subject") +
+#   ylab("Resting Metabolic Rate") +
+#   theme(axis.text = element_text(size = 16),
+#         axis.title = element_text(size = 20),
+#         plot.title = element_text(size = 25, face = "bold"),
+#         legend.position = "top",
+#         panel.border = element_rect(color = "black", fill = NA, size = 1.5))
+ 
+```
+
+### Busiest  Times
+```{r, fig.width=42, fig.height=16}
+ggplot(data = taxi_data_join_4, aes(x = hour)) + geom_bar(fill = '#000000') + scale_x_continuous(breaks =
+                                                                                                   seq(0, 30)) + ylab("Number of Rides") + xlab("Hour") + scale_y_continuous(labels = comma) + theme(axis.text = element_text(size = 50),
+                                                                                                                                                                                                     axis.title = element_text(size = 50)) + theme(
+                                                                                                                                                                                                       panel.grid.major = element_blank(),
+                                                                                                                                                                                                       panel.grid.minor = element_blank(),
+                                                                                                                                                                                                       panel.background = element_blank(),
+                                                                                                                                                                                                       axis.line = element_line(colour = "black")
+                                                                                                                                                                                                     ) +  theme(plot.background = element_rect(fill = 'yellow', colour = 'black'))
+
+
+```
+
+
+Column {.tabset} fig.width=50
+-----------------------------------------------------------------------
+
+### Most popular pick-up locations
+```{r, fig.width=42, fig.height=16}
+taxi_data_join_4 %>%
+  ggplot(aes(x = PU_borough)) + geom_bar(fill = '#000000') + coord_flip() +
+  scale_y_continuous(labels = comma) + xlab("Top Pick-Up Locations") +  ylab("Number of Rides") + scale_x_discrete(limits = c(
+"EWR",
+                                                                                                                              
+"Bronx",
+                                                                                                                              "Queens",
+                                                                                                                              "Brooklyn",
+                                                                                                                              "Manhattan")) + theme(axis.text = element_text(size = 50),
+                                                                                                                                                    axis.title = element_text(size = 50)) + theme(
+                                                                                                                                                      panel.grid.major = element_blank(),
+                                                                                                                                                      panel.grid.minor = element_blank(),
+                                                                                                                                                      panel.background = element_blank(),
+                                                                                                                                                      axis.line = element_line(colour = "black")
+                                                                                                                                                    ) +  theme(plot.background = element_rect(fill = 'yellow', colour = 'black'))
+
+
+
+ 
+```
+
+### Most popular drop-off locations
+```{r, fig.width=42, fig.height=16}
+taxi_data_join_4 %>%
+  ggplot(aes(x = DO_borough)) + geom_bar(fill = '#000000') + coord_flip() +
+  scale_y_continuous(labels = comma) + xlab("Top Drop Off Locations") +  ylab("Number of Rides") + scale_x_discrete(limits = c(
+"EWR",
+                                                                                                                              
+"Bronx",
+                                                                                                                              "Queens",
+                                                                                                                              "Brooklyn",
+                                                                                                                              "Manhattan")) + theme(axis.text = element_text(size = 50),
+                                                                                                                                                    axis.title = element_text(size = 50)) + theme(
+                                                                                                                                                      panel.grid.major = element_blank(),
+                                                                                                                                                      panel.grid.minor = element_blank(),
+                                                                                                                                                      panel.background = element_blank(),
+                                                                                                                                                      axis.line = element_line(colour = "black")
+                                                                                                                                                    ) +  theme(plot.background = element_rect(fill = 'yellow', colour = 'black'))
+```
+
+
+
